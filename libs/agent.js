@@ -4,6 +4,11 @@ async function setUserAgent(browser, page) {
     await page.setUserAgent(agent.replace('Headless', ''))
 }
 
+async function setViewportLarge(page) {
+    await page.setViewport({ width: 1440, height: 788 })
+}
+
 module.exports = {
-    setUserAgent
+    setUserAgent,
+    setViewportLarge
 }
