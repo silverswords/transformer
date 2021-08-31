@@ -6,7 +6,8 @@ function setupPageEvents(page, key) {
             total: 0,
             failed: 0,
             failedUrls: {}
-        }
+        },
+        messages: []
     }
 
     page.on('request', (req) => {
@@ -33,7 +34,14 @@ function setupPageEvents(page, key) {
         for (let i = 0; i < failed.length; i++) {
             console.log(`\t\t${failed[i]} failed ${stat.url.failedUrls[failed[i]]} times`)
         }
+
+        console.log(`${key} console messages:`)
+        stat.messages.forEach(msg => {
+            console.log(`\t${msg}`)
+        });
     })
+
+    page.on('console', msg => pageEventsStats[key].messages.push(msg.text()))
 }
 
 module.exports = {
