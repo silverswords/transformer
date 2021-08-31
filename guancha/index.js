@@ -39,6 +39,29 @@ async function executor() {
     })
     console.log(hotKeys)
 
+    const newsList = await page.$eval('.img-List', (ul) => {
+        const children = ul.children
+
+        let rets = []
+        for (let i = 0; i < children.length; i++) {
+            const li = children[i]
+
+            if (li.tagName != 'LI') {
+                continue
+            }
+
+            const a = li.children[0].children[0]
+
+            rets.push({
+                title: a.innerHTML,
+                link: a.href
+            })
+        }
+
+        return rets
+    })
+    console.log(newsList)
+
     await page.close()
     await browser.close();
 }
