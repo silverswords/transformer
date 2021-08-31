@@ -14,7 +14,7 @@ async function executor() {
 
     await page.goto('https://www.guancha.cn/', {
         waitUntil: 'networkidle2',
-    });
+    })
 
     const hotKeys = await page.$eval('.module-hot-point', (node) => {
         const children = node.children
@@ -63,7 +63,7 @@ async function executor() {
     console.log(newsList)
 
     await page.close()
-    await browser.close();
+    await browser.close()
 }
 
 module.exports = {

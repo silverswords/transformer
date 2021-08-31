@@ -10,11 +10,11 @@ async function executor() {
     await setUserAgent(browser, page)
     await setViewportLarge(page)
 
-    setupPageEvents(page, 'GUANCHA')
+    setupPageEvents(page, 'GO')
 
     await page.goto('https://go.dev/blog', {
         waitUntil: 'networkidle2',
-    });
+    })
 
     const messages = []
     const blogs = await page.$eval('#blogindex', (node) => {
@@ -52,7 +52,7 @@ async function executor() {
     console.log(blogs)
 
     await page.close()
-    await browser.close();
+    await browser.close()
 }
 
 module.exports = {
