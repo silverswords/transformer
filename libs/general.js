@@ -53,6 +53,36 @@ async function inspectSiteSelector(site, selector) {
     return tree
 }
 
+async function inspectPageEvents(site) {
+    const browser = await puppeteer.launch()
+
+    const page = await browser.newPage()
+    await setUserAgent(browser, page)
+    await setViewportLarge(page)
+
+    setupPageEvents(page, 'SITE EVENTS INSPECT')
+
+    page.on('error', err => {
+        console.log(`${site} error: ${err}`)
+    })
+
+    page.on('frameattached', frame => {
+        console.log(`${site} frame attached: ${frame.name()} - ${frame.url()}`)
+    })
+
+    page.on('workercreated', worker => {
+        console.log(`${site} worker created: ${worker.url()}`)
+    })
+
+    await page.goto(site, {
+        waitUntil: 'networkidle2',
+    })
+
+    await page.close()
+    await browser.close()
+}
+
 module.exports = {
-    inspectSiteSelector
+    inspectSiteSelector,
+    inspectPageEvents
 }

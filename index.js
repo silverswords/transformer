@@ -1,4 +1,4 @@
-const { inspectSiteSelector } = require('./libs/general.js')
+const { inspectSiteSelector, inspectPageEvents } = require('./libs/general.js')
 
 const argv = process.argv
 
@@ -10,9 +10,14 @@ if (argv.length < 3) {
 async function main() {
     const command = argv[2]
 
-    if (command == "inspect") {
+    if (command == 'inspect') {
         const tree = await inspect(argv)
         console.log(JSON.stringify(tree))
+        return
+    }
+
+    if (command == 'events') {
+        await eventsInspect(argv)
         return
     }
 
@@ -24,6 +29,10 @@ async function inspect(args) {
     const selector = args[4]
 
     return await inspectSiteSelector(site, selector)
+}
+
+async function eventsInspect(args) {
+    await inspectPageEvents(args[3])
 }
 
 async function crawling() {
