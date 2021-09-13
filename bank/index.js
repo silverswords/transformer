@@ -27,6 +27,9 @@ async function executor() {
 
             let rets = []
             let date = children[0].children[2]
+            let type = children[0].children[0]
+            const typeStigin = type.textContent.trim()
+
             let table = children[1].children[0].children[0].children[0].children[2].children
 
             let tempRets = []
@@ -40,6 +43,7 @@ async function executor() {
             }
 
             rets.push({
+                type:typeStigin.substring(typeStigin.indexOf('(') + 1, typeStigin.indexOf(')')),
                 date: date.textContent.substring(0, 10),
                 ...tempRets
             })
