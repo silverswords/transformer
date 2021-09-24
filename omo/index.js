@@ -11,7 +11,7 @@ async function executor()
     await setUserAgent(browser, page)
     await setViewportLarge(page)
 
-    setupPageEvents(page, "mlf")
+    setupPageEvents(page, "OMO")
 
     await page.goto("http://www.chinamoney.com.cn/chinese/yhgkscczh/", {
         waitUntil: "networkidle2",

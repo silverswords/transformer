@@ -11,7 +11,7 @@ async function executor()
     await setUserAgent(browser, page)
     await setViewportLarge(page)
 
-    setupPageEvents(page, "fund")
+    setupPageEvents(page, "FUND")
 
     await page.goto("http://fund.eastmoney.com/company/default.html", {
         waitUntil: "networkidle2",
