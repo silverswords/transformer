@@ -6,8 +6,9 @@ const { delay } = require('../libs/delay')
 const { post } = require('../libs/post')
 
 const api = {
-    Shibor: "http://192.168.0.25:8080/api/v1/post/shibor",
-    LPR: "http://192.168.0.25:8080/api/v1/post/lpr"
+    Shibor: "http://192.168.0.22:8081/api/v1/post/shibor",
+    LPR: "http://192.168.0.22:8081/api/v1/post/lpr",
+    prr: "http://192.168.0.22:8081/api/v1/post/prr"
 }
 
 async function executor() {
@@ -19,13 +20,13 @@ async function executor() {
 
     setupPageEvents(page, 'BANK')
 
-    const banks = [
+    const lprAndshibor = [
         'http://www.chinamoney.com.cn/chinese/lllpr/',
         'http://www.chinamoney.com.cn/chinese/bkshibor/'
     ]
 
-    for (let i = 0; i < banks.length; i++) {
-        await page.goto(banks[i], {
+    for (let i = 0; i < lprAndshibor.length; i++) {
+        await page.goto(lprAndshibor[i], {
             waitUntil: 'networkidle2',
         })
 
@@ -38,20 +39,20 @@ async function executor() {
 
             const table = children[1].children[0].children[0].children[0].children[2].children
 
-            let tempRets = []
+            let row = []
             for (let j = 0; j < table.length; j++) {
                 const item = table[j]
 
                 const term = item.children[0]
                 const td = item.children[1]
 
-                tempRets[term.textContent] = +td.textContent
+                row[term.textContent] = +td.textContent
             }
 
             let rets = {
                 type: typeStigin.substring(typeStigin.indexOf('(') + 1, typeStigin.indexOf(')')),
                 date: new Date(date.textContent.substring(0, 10)).toISOString(),
-                ...tempRets
+                ...row
             }
 
             return rets
@@ -60,6 +61,32 @@ async function executor() {
 
         await delay((Math.random() * 500) + 200)
     }
+
+    await page.goto('http://www.chinamoney.com.cn/chinese/mkdatapm/', {
+        waitUntil: 'networkidle2',
+    })
+
+    const prr = await page.$eval('.san-tabs-content', (node) => {
+        const children = node.children[1].children[0].children[0].children[0].children[0].children[0]
+        const date = children.children[0].children[0].children[0]
+        const table = children.children[1].children[0].children[0].children[0].children[2].children
+
+        let row = []
+        for (let i = 0; i < table.length; i++) {
+            if (table[i].getAttribute('data-blank') !== '1') {
+                row[table[i].children[0].textContent] = +table[i].children[1].textContent
+            }
+        }
+
+        let rets = []
+        let year = new Date().getFullYear()
+        rets.push({
+            date: new Date(year + '-' + date.textContent.trim().substring(0, 5)).toISOString(),
+            ...row
+        })
+        return rets
+    })
+    post(...prr, api['prr'])
 
     await page.close()
     await browser.close()
