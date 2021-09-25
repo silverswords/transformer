@@ -112,7 +112,9 @@ async function executor() {
     })
 
     for(let i = 0; i< pboc.length; i++) {
-        post(pboc[i], api['pboc'])
+        if(pboc[i].date.substring(0, 10) === new Date().toISOString().substring(0, 10)) {
+            post(pboc[i], api['pboc'])
+        }
     }
 
     await page.close()
