@@ -8,7 +8,8 @@ const { post } = require('../libs/post')
 const api = {
     Shibor: "http://192.168.0.22:8081/api/v1/post/shibor",
     LPR: "http://192.168.0.22:8081/api/v1/post/lpr",
-    prr: "http://192.168.0.22:8081/api/v1/post/prr"
+    prr: "http://192.168.0.22:8081/api/v1/post/prr",
+    pboc: "http://192.168.0.22:8081/api/v1/post/pboc"
 }
 
 async function executor() {
@@ -87,6 +88,32 @@ async function executor() {
         return rets
     })
     post(...prr, api['prr'])
+
+    await page.goto("http://www.chinamoney.com.cn/chinese/yhgkscczh/", {
+        waitUntil: "networkidle2",
+    })
+
+    const pboc = await page.$eval("#ticket-handle-tbody", (tbody) =>
+    {
+        let rets = []
+        const tr = tbody.children
+        for (let i = 0; i < tr.length; i++)
+        {
+            const td = tr[i]
+            rets.push({
+                date: new Date(td.children[0].children[0].innerHTML).toISOString(),
+                period: +td.children[1].children[0].innerHTML,
+                dealAmount: +td.children[2].children[0].innerHTML,
+                rate: +td.children[3].children[0].innerHTML,
+                tradingMethod: td.children[4].children[0].innerHTML,
+            })
+        }
+        return rets
+    })
+
+    for(let i = 0; i< pboc.length; i++) {
+        post(pboc[i], api['pboc'])
+    }
 
     await page.close()
     await browser.close()
