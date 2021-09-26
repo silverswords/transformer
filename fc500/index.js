@@ -16,7 +16,14 @@ async function executor() {
 
     setupPageEvents(page, 'FC500')
 
-    await page.goto('http://www.fortunechina.com/fortune500/c/2021-07/20/content_392708.htm', {
+    const url = {
+        '2021': 'http://www.fortunechina.com/fortune500/c/2021-07/20/content_392708.htm',
+        '2020': 'http://www.fortunechina.com/fortune500/c/2020-07/27/content_369925.htm',
+        '2019': 'http://www.fortunechina.com/fortune500/c/2019-07/10/content_337536.htm',
+        '2018': 'http://www.fortunechina.com/fortune500/c/2018-07/10/content_309961.htm'
+    }
+
+    await page.goto(url['2021'], {
         waitUntil: 'networkidle2',
     })
 
@@ -48,14 +55,13 @@ async function executor() {
         return rets
     })
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < companyList.length; i++) {
         await page.goto(companyList[i].link, {
             waitUntil: 'networkidle2',
         })
 
-        const info = await page.$eval('.c-rank-con', (node) => {
-
-            const table = node.children[0].children[0].children[0].children[0]
+        const info = await page.$eval('#printArea', (node) => {
+            const table = node.children[1].children[1].children[0].children[0].children[0].children[0]
 
             const revenueAnnualIncrease = table.children[1].children[2]
             const profitAnnualIncrease = table.children[2].children[2]
@@ -66,12 +72,12 @@ async function executor() {
             const returnOnNetAssets = table.children[8].children[2]
             const returnOnAssets = table.children[9].children[2]
 
-            const form = node.children[0].children[1]
+            const form = node.children[1].children[1].children[0].children[1]
 
-            const addr = form.children[1]
             const chairman = form.children[3]
             const employee = form.children[7]
             const website = form.children[11].children[0]
+            const addr = form.children[1]
 
             let province = ''
 
@@ -85,7 +91,10 @@ async function executor() {
                 province = addr.textContent.trim().substring(0, addr.textContent.trim().indexOf('道') + 1)
             }
 
+            const trade = node.children[3].children[0]
+
             return {
+                trade: trade.textContent.replace('- 行业横向比较','').replace('利润','').replace('营收','').replace('总资产','').trim(),
                 revenueAnnualIncrease: revenueAnnualIncrease.textContent.trim(),
                 profitAnnualIncrease: profitAnnualIncrease.textContent.trim(),
                 asset: +asset.textContent.trim().replaceAll(',', ''),
@@ -109,7 +118,7 @@ async function executor() {
         }
 
         await delay((Math.random() * 500) + 200)
-        console.log(i)
+        console.log(i, companyList[i].name)
     }
     const saveJson = JSON.stringify(companyList)
     fs.writeFile('fc500.json', saveJson, (err) => {
