@@ -24,19 +24,19 @@ async function executor() {
         '2017': 'http://www.fortunechina.com/fortune500/c/2017-07/31/content_287415.htm'
     }
 
-    await page.goto(url['2017'], {
+    await page.goto(url['2021'], {
         waitUntil: 'networkidle2',
     })
 
     //Tables will not be formatted differently until 2018, please note L32, L33
 
-    // await waitClick(page, '#table1_length > label > select')
-    // await press(page, 'ArrowDown', 'ArrowDown', 'ArrowDown', 'Enter')
+    await waitClick(page, '#table1_length > label > select')
+    await press(page, 'ArrowDown', 'ArrowDown', 'ArrowDown', 'Enter')
 
     //L38 Use '#table1 > tbody' after 2018
     //L38 Use '#yytable > tbody' by 2018
 
-    const companyList = await page.$eval('#yytable > tbody', (table) => {
+    const companyList = await page.$eval('#table1 > tbody', (table) => {
         const row = table.children
         let rets = []
 
