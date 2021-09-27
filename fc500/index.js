@@ -20,17 +20,23 @@ async function executor() {
         '2021': 'http://www.fortunechina.com/fortune500/c/2021-07/20/content_392708.htm',
         '2020': 'http://www.fortunechina.com/fortune500/c/2020-07/27/content_369925.htm',
         '2019': 'http://www.fortunechina.com/fortune500/c/2019-07/10/content_337536.htm',
-        '2018': 'http://www.fortunechina.com/fortune500/c/2018-07/10/content_309961.htm'
+        '2018': 'http://www.fortunechina.com/fortune500/c/2018-07/10/content_309961.htm',
+        '2017': 'http://www.fortunechina.com/fortune500/c/2017-07/31/content_287415.htm'
     }
 
-    await page.goto(url['2021'], {
+    await page.goto(url['2017'], {
         waitUntil: 'networkidle2',
     })
 
-    await waitClick(page, '#table1_length > label > select')
-    await press(page, 'ArrowDown', 'ArrowDown', 'ArrowDown', 'Enter')
+    //Tables will not be formatted differently until 2018, please note L32, L33
 
-    const companyList = await page.$eval('#table1 > tbody', (table) => {
+    // await waitClick(page, '#table1_length > label > select')
+    // await press(page, 'ArrowDown', 'ArrowDown', 'ArrowDown', 'Enter')
+
+    //L38 Use '#table1 > tbody' after 2018
+    //L38 Use '#yytable > tbody' by 2018
+
+    const companyList = await page.$eval('#yytable > tbody', (table) => {
         const row = table.children
         let rets = []
 
