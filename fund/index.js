@@ -3,8 +3,7 @@ const puppeteer = require("puppeteer")
 const { setUserAgent, setViewportLarge } = require("../libs/agent.js")
 const { setupPageEvents } = require("../libs/page_events.js")
 
-async function executor()
-{
+async function executor() {
     const browser = await puppeteer.launch()
 
     const page = await browser.newPage()
@@ -17,12 +16,10 @@ async function executor()
         waitUntil: "networkidle2",
     })
 
-    const Fund = await page.$eval(".common-sort-table > tbody", (tbody) =>
-    {
+    const Fund = await page.$eval(".common-sort-table > tbody", (tbody) => {
         let rets = []
         const tr = tbody.children
-        for (let i = 0; i < tr.length; i++)
-        {
+        for (let i = 0; i < tr.length; i++) {
             const td = tr[i]
             const fundsize = td.children[5].children[0].innerHTML
             rets.push({
@@ -36,8 +33,6 @@ async function executor()
         }
         return rets
     })
-
-    console.log(Fund)
 
     await page.close()
     await browser.close()
