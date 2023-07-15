@@ -75,6 +75,7 @@ async function getDetail(page) {
                                 info.taste = tasteAndTropism[0].split("，")
                                 if (tasteAndTropism.length == 2) {
                                     info.tropism = tasteAndTropism[1].split("、")
+                                    info.tropism[0] = info.tropism[0].slice(1)
                                 }
                                 break
                             case "功效与作用":
